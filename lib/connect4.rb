@@ -7,7 +7,5 @@ player1 = Player.new
 player2 = Player.new
 puts "\nPlayers:\n#{player1.name} - #{player1.symbol}\n#{player2.name} - #{player2.symbol}\n"
 
-=begin
 board = Board.new(player1, player2)
-board.start_game
-=end
+
