@@ -2,9 +2,7 @@ class Board
 
   attr_reader :cells
 
-  def initialize(player1,player2)
-    @player1 = player1
-    @player2 = player2
+  def initialize
     @cells = []
     7.times do
       @cells.push(['_','_','_','_','_','_'])
