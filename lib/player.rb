@@ -5,53 +5,43 @@ class Player
   BLACK = "\u26AB".force_encoding('utf-8')
   WHITE = "\u26AA".force_encoding('utf-8')
 
-  def initialize
-    if defined?(@@number_of_players)
-      @@number_of_players += 1
-    else
-      @@number_of_players = 1
-    end
-    get_name
-    assign_symbol    
+  def initialize(player1=nil)
+    @name = get_name(player1)
+    @symbol = assign_symbol(player1)
   end
 
   private
 
-  def get_name
-    if @@number_of_players == 1
+  def get_name(player1)
+    if player1.nil?
       puts "Enter first player name:"
-      @name = gets.chomp.capitalize
-      while @name.empty?
+      name = gets.chomp.capitalize
+      while name.empty?
         puts "You didn't enter a name. Try again:"
-        @name = gets.chomp.capitalize
+        name = gets.chomp.capitalize
       end
-      @@p1_name = @name
     else
       puts "Enter second player name:"
-      @name = gets.chomp.capitalize
-      while @name.empty? || @name == @@p1_name
+      name = gets.chomp.capitalize
+      while name.empty? || name == player1.name
         puts "You didn't enter a name, or that name is already taken. Try again:"
-        @name = gets.chomp.capitalize
+        name = gets.chomp.capitalize
       end
     end
+    name
   end
 
-  def assign_symbol
-    if @@number_of_players == 1
-      print "Would you like to play black or white? "
+  def assign_symbol(player1)
+    if player1.nil?
+      puts "Would you like to play black or white?"
       colour = gets.chomp.downcase
       while not (["black","white"].include? colour)
         puts "Please choose black or white."
         colour = gets.chomp.downcase
       end
-      @@p1_symbol = colour
-      if colour == "black"
-        @symbol = BLACK
-      else
-        @symbol = WHITE
-      end
+      colour == "black" ? @symbol = BLACK : @symbol = WHITE
     else
-      @@p1_symbol == "black" ? @symbol = WHITE : @symbol = BLACK
+      player1.symbol == WHITE ? @symbol = BLACK : @symbol = WHITE
     end
   end
 end

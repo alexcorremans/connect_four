@@ -4,8 +4,8 @@ describe Game do
 
   let(:white) { Player::WHITE }
   let(:black) { Player::BLACK }
-  let(:player1) { instance_double('Player', name: "Tester 1", symbol: white) }
-  let(:player2) { instance_double('Player', name: "Tester 2", symbol: black) }
+  let(:player1) { instance_double('Player', name: "One", symbol: white) }
+  let(:player2) { instance_double('Player', name: "Two", symbol: black) }
   let(:game) { Game.new(player1,player2) }
 
   describe "#initialize" do
@@ -21,8 +21,26 @@ describe Game do
 
   describe "#start_game" do
     it "asks which player would like to start the game and moves on to the first turn with that player" do
-      
+      allow_any_instance_of(Game).to receive(:gets).and_return("one")
     
     end
   end
+
+  describe "#next_turn" do
+    it "prints a victory message with the correct player and exits the program when the board has four symbols in a row" do
+    end
+  end
+
+  describe "#choose_column" do
+    it "fills the first empty row of the given column" do
+    end
+
+    it "notifies player if column is full" do
+    end
+
+    it "notifies player if input is invalid" do
+    end
+  end
+
+
 end
