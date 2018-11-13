@@ -13,7 +13,7 @@ describe Player do
 
     context "when creating first player" do
 
-      it "creates a first player and asks for user input in order ot assign name and symbol" do
+      it "creates a first player and asks for user input in order to assign name and symbol" do
         allow_any_instance_of(Player).to receive(:gets).and_return("one\n", "black\n")
         expect{ player1 = Player.new }.to output(
           "Enter first player name:\n" +

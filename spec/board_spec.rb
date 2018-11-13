@@ -2,10 +2,6 @@ require './lib/board'
 
 describe Board do
 
-#  before do
-#    allow($stdout).to receive(:write)
-#  end
-
   let(:board) { Board.new }
   let(:white) { Player::WHITE }
   let(:black) { Player::BLACK }

@@ -2,8 +2,8 @@ class Player
 
   attr_reader :name, :symbol
 
-  BLACK = "\u26AB".force_encoding('utf-8')
-  WHITE = "\u26AA".force_encoding('utf-8')
+  BLACK = "\u26AB".force_encoding("utf-8")
+  WHITE = "\u26AA".force_encoding("utf-8")
 
   def initialize(player1=nil)
     @name = get_name(player1)
