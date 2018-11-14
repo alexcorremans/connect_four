@@ -9,10 +9,10 @@ class Game
     @board = board
     @player1 = player1
     @player2 = player2
-    display_players
   end
 
   def start
+    display_players
     puts "Who would like to start?"
     name = gets.chomp.capitalize
     while !(name == @player1.name || name == @player2.name)
@@ -30,9 +30,29 @@ class Game
   end
   
   def play(player)
-
+    @board.display
+    choice = choose_column
+    try = @board.modify(choice,player.symbol)
+    until try == "success"
+      puts "That column's already full! Try another one.\n"
+      choice = choose_column
+      try = @board.modify(choice,player.symbol)
+    end
+    next_turn(player)
   end
 
+  def choose_column
+    puts "Please enter a column number between 1 and 7:"
+    column_number = gets.chomp
+    while !column_number.to_i.between?(1, 7)
+      puts "That's not a number between 1 and 7. Try again:"
+      column_number = gets.chomp
+    end
+    choice = (column_number.to_i) - 1
+  end
+
+  def next_turn(player)
+  end
   
   
 end
