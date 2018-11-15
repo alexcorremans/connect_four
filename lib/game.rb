@@ -2,9 +2,7 @@ require_relative 'board'
 require_relative 'player'
 
 class Game
-
-  attr_accessor :board, :player1, :player2
-
+  
   def initialize(board, player1, player2)
     @board = board
     @player1 = player1
