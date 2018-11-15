@@ -52,7 +52,23 @@ class Game
   end
 
   def next_turn(player)
+    if @board.winner?
+      victory(player)
+    elsif @board.full?
+      full_board
+    else
+      puts "\nIt's your turn, #{player == @player1 ? @player2.name : @player1.name}!"
+      player == @player1 ? play(@player2) : play(@player1)
+    end
   end
-  
-  
+
+  def victory(player)
+    puts "The winner is #{player.name}. Congratulations!"
+    exit
+  end
+
+  def full_board
+    puts "The board is full, and no one won. Sorry!"
+    exit
+  end  
 end

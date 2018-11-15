@@ -89,5 +89,85 @@ EXPECTED
     end
   end
 
-  # needs a four_in_a_row? and a full? method that Game can call
+  describe "#winner?" do
+    it "returns true when there are four identical symbols in a row" do
+      board.instance_variable_set(:@cells, [
+        ["#{white}","_","_","_","_","_"],
+        ["#{white}","_","_","_","_","_"],
+        ["#{white}","_","_","_","_","_"],
+        ["#{white}","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"]
+      ])
+      expect(board.send(:winner?)).to be true
+    end
+
+    it "returns true when there are four identical symbols in a column" do
+      board.instance_variable_set(:@cells, [
+        ["#{black}","#{black}","#{black}","#{black}","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"]
+      ])
+      expect(board.send(:winner?)).to be true
+    end
+
+    it "returns true when there are four identical symbols diagonally" do
+      board.instance_variable_set(:@cells, [
+        ["#{white}","_","_","_","_","_"],
+        ["#{black}","#{white}","_","_","_","_"],
+        ["#{black}","#{black}","#{white}","_","_","_"],
+        ["#{white}","#{black}","#{black}","#{white}","_","_"],
+        ["#{white}","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"]
+      ])
+      expect(board.send(:winner?)).to be true
+    end
+
+    it "returns false in any other case" do
+      board.instance_variable_set(:@cells, [
+        ["#{white}","_","_","_","_","_"],
+        ["#{white}","_","_","_","_","_"],
+        ["#{black}","_","_","_","_","_"],
+        ["#{black}","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"],
+        ["_","_","_","_","_","_"]
+      ])
+      expect(board.send(:winner?)).to be false
+    end
+  end
+
+  describe "#full?" do
+    it "returns true when the board is full" do
+      board.instance_variable_set(:@cells, [
+        ["#{white}","#{black}","#{black}","#{black}","#{white}","#{white}"],
+        ["#{black}","#{white}","#{white}","#{white}","#{black}","#{black}"],
+        ["#{white}","#{black}","#{black}","#{white}","#{black}","#{white}"],
+        ["#{black}","#{white}","#{white}","#{white}","#{black}","#{white}"],
+        ["#{black}","#{white}","#{black}","#{black}","#{white}","#{black}"],
+        ["#{black}","#{black}","#{white}","#{black}","#{black}","#{white}"],
+        ["#{white}","#{white}","#{black}","#{white}","#{white}","#{black}"]
+      ])
+      expect(board.send(:full?)).to be true
+    end
+
+    it "returns false when it isn't" do
+      board.instance_variable_set(:@cells, [
+        ["#{white}","#{black}","#{black}","#{black}","#{white}","#{white}"],
+        ["#{black}","#{white}","#{white}","#{white}","#{black}","#{black}"],
+        ["#{white}","#{black}","#{black}","#{white}","#{black}","#{white}"],
+        ["#{black}","#{white}","#{white}","#{white}","#{black}","#{white}"],
+        ["#{black}","#{white}","#{black}","#{black}","#{white}","#{black}"],
+        ["#{black}","#{black}","#{white}","#{black}","#{black}","#{white}"],
+        ["#{white}","#{white}","#{black}","#{white}","#{white}","_"]
+      ])
+      expect(board.send(:full?)).to be false
+    end
+  end
 end

@@ -135,6 +135,77 @@ describe Game do
   end
 
   describe "#next_turn" do
-    it "prints a victory message with the correct player and exits the program when the board has four symbols in a row"
+
+    before(:each) do
+      allow(game).to receive(:play)
+    end
+
+    it "checks whether the player has won" do
+      allow(board).to receive(:winner?).and_return(false)
+      allow(board).to receive(:full?).and_return(false)
+      game.send(:next_turn, player1)
+      expect(board).to have_received(:winner?)
+    end
+
+    it "calls #victory if the player has won" do
+      allow(board).to receive(:winner?).and_return(true)
+      allow(game).to receive(:victory)
+      game.send(:next_turn, player1)
+      expect(game).to have_received(:victory).with(player1)
+    end
+
+    it "checks whether the board is full" do
+      allow(board).to receive(:winner?).and_return(false)
+      allow(board).to receive(:full?).and_return(false)
+      game.send(:next_turn, player1)
+      expect(board).to have_received(:full?)
+    end
+
+    it "calls #full_board if the board is full" do
+      allow(board).to receive(:winner?).and_return(false)
+      allow(board).to receive(:full?).and_return(true)
+      allow(game).to receive(:full_board)
+      game.send(:next_turn, player1)
+      expect(game).to have_received(:full_board)
+    end
+
+    it "continues the game if there is no winner and the board isn't full" do
+      allow(board).to receive(:winner?).and_return(false)
+      allow(board).to receive(:full?).and_return(false)
+      game.send(:next_turn, player1)
+      expect(game).to have_received(:play).with(player2)
+    end
+
+    it "notfies the next player that it's their turn" do
+      allow(board).to receive(:winner?).and_return(false)
+      allow(board).to receive(:full?).and_return(false)
+      expect { game.send(:next_turn, player1) }.to output(
+        "\nIt's your turn, #{player2.name}!\n"
+      ).to_stdout
+    end    
+  end
+
+  describe "#victory" do
+    it "prints a message to say the player won and ends the game" do
+      begin
+        expect{ game.send(:victory, player1) }.to output(
+          "The winner is #{player1.name}. Congratulations!\n"
+        ).to_stdout
+      rescue SystemExit
+        puts "Exiting the game"
+      end
+    end
+  end
+
+  describe "#full_board" do
+    it "prints a message to say the board is full and ends the game" do
+      begin
+        expect{ game.send(:full_board) }.to output(
+          "The board is full, and no one won. Sorry!\n"
+        ).to_stdout
+      rescue SystemExit
+        puts "Exiting the game"
+      end
+    end
   end
 end
