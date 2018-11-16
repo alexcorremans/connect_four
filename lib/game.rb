@@ -1,10 +1,10 @@
-require_relative 'board'
+require_relative 'cage'
 require_relative 'player'
 
 class Game
   
-  def initialize(board, player1, player2)
-    @board = board
+  def initialize(cage, player1, player2)
+    @cage = cage
     @player1 = player1
     @player2 = player2
   end
@@ -28,13 +28,13 @@ class Game
   end
   
   def play(player)
-    @board.display
+    @cage.display
     choice = choose_column
-    try = @board.modify(choice,player.symbol)
+    try = @cage.modify(choice,player.symbol)
     until try == "success"
       puts "That column's already full! Try another one.\n"
       choice = choose_column
-      try = @board.modify(choice,player.symbol)
+      try = @cage.modify(choice,player.symbol)
     end
     next_turn(player)
   end
@@ -50,10 +50,10 @@ class Game
   end
 
   def next_turn(player)
-    if @board.winner?
+    if @cage.winner?(player.symbol)
       victory(player)
-    elsif @board.full?
-      full_board
+    elsif @cage.full?
+      full_cage
     else
       puts "\nIt's your turn, #{player == @player1 ? @player2.name : @player1.name}!"
       player == @player1 ? play(@player2) : play(@player1)
@@ -61,12 +61,14 @@ class Game
   end
 
   def victory(player)
+    @cage.display
     puts "The winner is #{player.name}. Congratulations!"
     exit
   end
 
-  def full_board
-    puts "The board is full, and no one won. Sorry!"
+  def full_cage
+    @cage.display
+    puts "The cage is full, and no one won. Sorry!"
     exit
   end  
 end

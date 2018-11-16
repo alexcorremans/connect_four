@@ -8,14 +8,14 @@ describe Game do
 
   let(:white) { Player::WHITE }
   let(:black) { Player::BLACK }
-  let(:board) { Board.new }
+  let(:cage) { Cage.new }
   let(:player1) { instance_double('Player', name: "One", symbol: black) }
   let(:player2) { instance_double('Player', name: "Two", symbol: white) }
-  let(:game) { Game.new(board, player1, player2) }
+  let(:game) { Game.new(cage, player1, player2) }
 
   describe "#initialize" do
-    it "receives a board and assigns it to an instance variable" do
-      expect(game.instance_variable_get(:@board)).to eql(board)
+    it "receives a cage and assigns it to an instance variable" do
+      expect(game.instance_variable_get(:@cage)).to eql(cage)
     end
 
     it "receives two players and assigns them to instance variables" do
@@ -74,30 +74,31 @@ describe Game do
   describe "#play" do
 
     before(:each) do
-      allow(board).to receive(:display)
+      allow(cage).to receive(:display)
       allow(game).to receive(:next_turn)
       allow(game).to receive(:choose_column).and_return(3)
     end
 
-    it "calls #display on the board" do
+
+    it "calls #display on the cage" do
       game.send(:play,player1)
-      expect(board).to have_received(:display)
+      expect(cage).to have_received(:display)
     end
 
     it "calls #choose_column" do
-      allow(board).to receive(:modify).and_return("success")
+      allow(cage).to receive(:modify).and_return("success")
       game.send(:play, player1)
       expect(game).to have_received(:choose_column)
     end
 
-    it "modifies the board" do
-      allow(board).to receive(:modify).and_return("success")
+    it "modifies the cage" do
+      allow(cage).to receive(:modify).and_return("success")
       game.send(:play,player1)
-      expect(board).to have_received(:modify).with(3,player1.symbol)
+      expect(cage).to have_received(:modify).with(3,player1.symbol)
     end
 
     it "notifies the player if column is full and asks for another column until successful" do
-      allow(board).to receive(:modify).and_return("fail","fail","success")
+      allow(cage).to receive(:modify).and_return("fail","fail","success")
       expect{ game.send(:play, player1) }.to output(
         "That column's already full! Try another one.\n" +
         "That column's already full! Try another one.\n"
@@ -106,7 +107,7 @@ describe Game do
     end
 
     it "calls #next_turn with the correct player" do
-      allow(board).to receive(:modify).and_return("success")
+      allow(cage).to receive(:modify).and_return("success")
       game.send(:play,player1)
       expect(game).to have_received(:next_turn).with(player1)
     end
@@ -141,44 +142,44 @@ describe Game do
     end
 
     it "checks whether the player has won" do
-      allow(board).to receive(:winner?).and_return(false)
-      allow(board).to receive(:full?).and_return(false)
+      allow(cage).to receive(:winner?).and_return(false)
+      allow(cage).to receive(:full?).and_return(false)
       game.send(:next_turn, player1)
-      expect(board).to have_received(:winner?)
+      expect(cage).to have_received(:winner?)
     end
 
     it "calls #victory if the player has won" do
-      allow(board).to receive(:winner?).and_return(true)
+      allow(cage).to receive(:winner?).and_return(true)
       allow(game).to receive(:victory)
       game.send(:next_turn, player1)
       expect(game).to have_received(:victory).with(player1)
     end
 
-    it "checks whether the board is full" do
-      allow(board).to receive(:winner?).and_return(false)
-      allow(board).to receive(:full?).and_return(false)
+    it "checks whether the cage is full" do
+      allow(cage).to receive(:winner?).and_return(false)
+      allow(cage).to receive(:full?).and_return(false)
       game.send(:next_turn, player1)
-      expect(board).to have_received(:full?)
+      expect(cage).to have_received(:full?)
     end
 
-    it "calls #full_board if the board is full" do
-      allow(board).to receive(:winner?).and_return(false)
-      allow(board).to receive(:full?).and_return(true)
-      allow(game).to receive(:full_board)
+    it "calls #full_cage if the cage is full" do
+      allow(cage).to receive(:winner?).and_return(false)
+      allow(cage).to receive(:full?).and_return(true)
+      allow(game).to receive(:full_cage)
       game.send(:next_turn, player1)
-      expect(game).to have_received(:full_board)
+      expect(game).to have_received(:full_cage)
     end
 
-    it "continues the game if there is no winner and the board isn't full" do
-      allow(board).to receive(:winner?).and_return(false)
-      allow(board).to receive(:full?).and_return(false)
+    it "continues the game if there is no winner and the cage isn't full" do
+      allow(cage).to receive(:winner?).and_return(false)
+      allow(cage).to receive(:full?).and_return(false)
       game.send(:next_turn, player1)
       expect(game).to have_received(:play).with(player2)
     end
 
     it "notfies the next player that it's their turn" do
-      allow(board).to receive(:winner?).and_return(false)
-      allow(board).to receive(:full?).and_return(false)
+      allow(cage).to receive(:winner?).and_return(false)
+      allow(cage).to receive(:full?).and_return(false)
       expect { game.send(:next_turn, player1) }.to output(
         "\nIt's your turn, #{player2.name}!\n"
       ).to_stdout
@@ -186,6 +187,20 @@ describe Game do
   end
 
   describe "#victory" do
+
+    before(:each) do
+      allow(cage).to receive(:display)
+    end
+
+    it "calls #display on the cage" do
+      begin
+        game.send(:victory,player1)
+      rescue SystemExit
+        puts "Exiting the game"
+      end
+      expect(cage).to have_received(:display)
+    end
+
     it "prints a message to say the player won and ends the game" do
       begin
         expect{ game.send(:victory, player1) }.to output(
@@ -197,11 +212,25 @@ describe Game do
     end
   end
 
-  describe "#full_board" do
-    it "prints a message to say the board is full and ends the game" do
+  describe "#full_cage" do
+
+    before(:each) do
+      allow(cage).to receive(:display)
+    end
+
+    it "calls #display on the cage" do
       begin
-        expect{ game.send(:full_board) }.to output(
-          "The board is full, and no one won. Sorry!\n"
+        game.send(:full_cage)
+      rescue SystemExit
+        puts "Exiting the game"
+      end
+      expect(cage).to have_received(:display)
+    end
+
+    it "prints a message to say the cage is full and ends the game" do
+      begin
+        expect{ game.send(:full_cage) }.to output(
+          "The cage is full, and no one won. Sorry!\n"
         ).to_stdout
       rescue SystemExit
         puts "Exiting the game"
