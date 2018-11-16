@@ -38,7 +38,7 @@ class Cage
     winner = false
     @cells.each do |column|
       column.each do |cell|
-        next if cell.symbol != symbol # only check the cells containing symbol just played
+        next if cell.symbol != symbol
         if (check(cell, "right") ||
           check(cell, "left") ||
           check(cell, "up") ||
@@ -64,7 +64,7 @@ class Cage
     end
     x = next_cell_location[0]
     y = next_cell_location[1]
-    return false if @cells[x][y].nil? # cell is empty
+    return false if @cells[x][y].nil?
     return false if @cells[x][y].symbol != cell.symbol
     count += 1
     check(@cells[x][y], direction, count)
@@ -75,6 +75,4 @@ class Cage
       column.size == 6
     end
   end
-
-
 end

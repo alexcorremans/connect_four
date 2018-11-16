@@ -51,14 +51,14 @@ EXPECTED
       expect(cells[0][1].instance_variable_get(:@symbol)).to eql(black)
     end
 
-    it "returns success when done successfully" do
+    it "returns 'success' when done successfully" do
       cage.instance_variable_set(:@cells, [
         [Cell.new(0,0,white)],[],[],[],[],[],[]
       ])
       expect(cage.send(:modify, 0, black)).to eql("success")
     end
   
-    it "returns fail when column is already full" do
+    it "returns 'fail' when column is already full" do
       cage.instance_variable_set(:@cells, [
         [Cell.new(0,0,white),Cell.new(0,1,black),Cell.new(0,2,black),Cell.new(0,3,black),Cell.new(0,4,white),Cell.new(0,5,black)],
         [],
@@ -72,14 +72,67 @@ EXPECTED
     end
   end
 
-  describe "check" do
-    it "returns false if there is no cell in the given direction"
+  describe "#check(cell, direction)" do
+    it "returns false if there is no cell in the given direction" do
+      cell = Cell.new(0,0,white)
+      expect(cage.send(:check, cell,"left")).to be false
+    end
 
-    it "returns false if the cell in the given direction is empty"
+    it "returns false if the cell in the given direction is empty" do
+      cage.instance_variable_set(:@cells, [
+        [Cell.new(0,0,white)],
+        [],
+        [Cell.new(2,0,black)],
+        [],
+        [],
+        [],
+        []
+      ])
+      cell = cells[2][0]
+      expect(cage.send(:check, cell, "right")).to be false
+    end
 
-    it "returns false if the cell in the given direction contains a different symbol"
+    it "returns false if the cell in the given direction contains a different symbol" do
+      cage.instance_variable_set(:@cells, [
+        [Cell.new(0,0,white)],
+        [Cell.new(1,0,black),Cell.new(1,1,white)],
+        [Cell.new(2,0,black),Cell.new(2,1,white),Cell.new(2,2,white)],
+        [Cell.new(3,0,white),Cell.new(3,1,black),Cell.new(3,2,black)],
+        [Cell.new(4,0,white)],
+        [],
+        []
+      ])
+      cell = cells[2][0]
+      expect(cage.send(:check, cell, "diagonal_right_up")).to be false
+    end
 
-    it "returns true if there are four identical symbols in a row"
+    it "returns false if there are less than four identical symbols in a row in a given direction from a starting cell" do
+      cage.instance_variable_set(:@cells, [
+        [Cell.new(0,0,white),Cell.new(0,1,black),Cell.new(0,2,black),Cell.new(0,3,white)],
+        [Cell.new(1,0,white),Cell.new(1,1,black),Cell.new(1,2,white)],
+        [Cell.new(2,0,black),Cell.new(2,1,white),Cell.new(2,2,black)],
+        [],
+        [],
+        [],
+        []
+      ])
+      cell = cells[0][3]
+      expect(cage.send(:check, cell, "diagonal_right_down")).to be false
+    end
+
+    it "returns true if there are four identical symbols in a row in a given direction from a starting cell" do
+      cage.instance_variable_set(:@cells, [
+        [Cell.new(0,0,white),Cell.new(0,1,black),Cell.new(0,2,black),Cell.new(0,3,white)],
+        [Cell.new(1,0,white),Cell.new(1,1,black),Cell.new(1,2,white)],
+        [Cell.new(2,0,black),Cell.new(2,1,white),Cell.new(2,2,black)],
+        [Cell.new(3,0,white)],
+        [],
+        [],
+        []
+      ])
+      cell = cells[0][3]
+      expect(cage.send(:check, cell, "diagonal_right_down")).to be true
+    end
   end
 
   describe "#winner?" do
@@ -122,7 +175,7 @@ EXPECTED
       expect(cage.send(:winner?, white)).to be true
     end
 
-    it "returns false in any other case" do
+    it "returns false when there are no four symbols in a row" do
       cage.instance_variable_set(:@cells, [
         [Cell.new(0,0,white)],
         [Cell.new(1,0,white)],
@@ -160,7 +213,6 @@ EXPECTED
         [Cell.new(6,0,white),Cell.new(6,1,white),Cell.new(6,2,black),Cell.new(6,3,white),Cell.new(6,4,white)]
       ])
       expect(cage.send(:full?)).to be false
-
     end
   end
 end
